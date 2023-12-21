@@ -28,42 +28,38 @@ import { getHeight } from "ol/extent";
 import { toContext } from "ol/render";
 import { areaMapAssetVectorLayerStyleFunction } from "./asset-styles";
 
-
 const fill = new Fill();
 const stroke = new Stroke({
   color: "rgba(0,0,0,0.8)",
   width: 2,
 });
 
-   const areaMApPropertyVectorRendererFuncV2 = (
-  pixelCoordinates,
-  state
-) => {
-   console.log("sssss", state);
+const areaMApPropertyVectorRendererFuncV2 = (pixelCoordinates, state) => {
+  console.log("sssss", state);
   const context = state.context;
   const geometry = state.geometry.clone();
   geometry.setCoordinates(pixelCoordinates);
   const extent = geometry.getExtent();
   const width = getWidth(extent);
-     const height = getHeight(extent);
-     //new code
- const svgtext2 = state.feature.get("hatch");
-    const img = new Image();
+  const height = getHeight(extent);
+  //new code
+  const svgtext2 = state.feature.get("hatch");
+  const img = new Image();
 
-    // img.onload = function () {
-    //   feature.set("flag", img);
-    // };
-    
-    img.src = "data:image/svg+xml;utf8," + encodeURIComponent(svgtext2);
+  // img.onload = function () {
+  //   feature.set("flag", img);
+  // };
 
-     //end new code
-    //  const flag = state.feature.get("flag");
-    const flag = img
-     console.log("flag",flag)
+  img.src = "data:image/svg+xml;utf8," + encodeURIComponent(svgtext2);
+
+  //end new code
+  //  const flag = state.feature.get("flag");
+  const flag = img;
+  console.log("flag", flag);
   if (!flag || height < 1 || width < 1) {
     return;
   }
- 
+
   context.save();
   const renderContext = toContext(context, {
     pixelRatio: 1,
@@ -79,9 +75,7 @@ const stroke = new Stroke({
   const left = bottomLeft[0];
   const bottom = bottomLeft[1];
   const hf = width / (height * 8);
-  context.drawImage(flag,  left, bottom, width *20, height*hf*20);
- 
- 
+  context.drawImage(flag, left, bottom, width * 20, height * hf * 20);
 
   context.restore();
 };
@@ -95,7 +89,7 @@ export const AreaMap = () => {
   const router = useRouter();
   const [center, setCenter] = useState("");
   const [zoom, setZoom] = useState("");
- 
+
   const mapRef = useRef();
   const dispatch = useDispatch();
 
@@ -141,88 +135,76 @@ export const AreaMap = () => {
     (state) => state.areaMapReducer.areaZoomMode
   );
 
-    useEffect(()=>{
-     console.log("ue2")
-      //set style
+  useEffect(() => {
+    console.log("ue2");
+    //set style
     const style = new Style({});
-  style.setRenderer(areaMApPropertyVectorRendererFuncV2);
+    style.setRenderer(areaMApPropertyVectorRendererFuncV2);
 
     fPropVectorLayerRef.current?.setStyle(style);
-    }, [fPropVectorLayerRef.current])
-  
-  
+  }, [fPropVectorLayerRef.current]);
+
   useEffect(() => {
-      
     if (syncPropertyFeatures) {
-      syncPropSourceRef?.current?.clear()
-      const e = new GeoJSON().readFeatures(syncPropertyFeatures)
-       
+      syncPropSourceRef?.current?.clear();
+      const e = new GeoJSON().readFeatures(syncPropertyFeatures);
+
       syncPropSourceRef?.current?.addFeatures(e);
     }
-        
-     
-     if (syncPropSourceRef.current) {
-       const p1= syncPropSourceRef.current?.getExtent()[0]
-       if (p1 != Infinity) {
-         mapRef.current?.getView()?.fit(syncPropSourceRef.current?.getExtent(), {
-           padding: [200, 200, 200, 200],
-           duration: 3000,
-         });
-       }
-       
-     }
+
+    if (syncPropSourceRef.current) {
+      const p1 = syncPropSourceRef.current?.getExtent()[0];
+      if (p1 != Infinity) {
+        mapRef.current?.getView()?.fit(syncPropSourceRef.current?.getExtent(), {
+          padding: [200, 200, 200, 200],
+          duration: 3000,
+        });
+      }
+    }
   }, [syncPropertyFeatures]);
- 
+
   useEffect(() => {
-      
     if (featuredPropertyFeatures) {
-      fPropSourceRef?.current?.clear()
-      const e = new GeoJSON().readFeatures(featuredPropertyFeatures)
-       
+      fPropSourceRef?.current?.clear();
+      const e = new GeoJSON().readFeatures(featuredPropertyFeatures);
+
       fPropSourceRef?.current?.addFeatures(e);
     }
-        
-     
-     if (fPropSourceRef.current) {
-       const p1= fPropSourceRef.current?.getExtent()[0]
-       if (p1 != Infinity) {
-         mapRef.current?.getView()?.fit(fPropSourceRef.current?.getExtent(), {
-           padding: [200, 200, 200, 200],
-           duration: 3000,
-         });
-       }
-       
-     }
+
+    if (fPropSourceRef.current) {
+      const p1 = fPropSourceRef.current?.getExtent()[0];
+      if (p1 != Infinity) {
+        mapRef.current?.getView()?.fit(fPropSourceRef.current?.getExtent(), {
+          padding: [200, 200, 200, 200],
+          duration: 3000,
+        });
+      }
+    }
   }, [featuredPropertyFeatures]);
-   
+
   useEffect(() => {
-      console.log("assetFeatures",assetFeatures,)
+    console.log("assetFeatures", assetFeatures);
     if (assetFeatures?.features) {
-      assetSourceRef?.current?.clear()
-      const e = new GeoJSON().readFeatures(assetFeatures)
-       
+      assetSourceRef?.current?.clear();
+      const e = new GeoJSON().readFeatures(assetFeatures);
+
       assetSourceRef?.current?.addFeatures(e);
     }
-        
-     
-     if (assetSourceRef.current) {
-       const p1= assetSourceRef.current?.getExtent()[0]
-       if (p1 != Infinity) {
-         mapRef.current?.getView()?.fit(assetSourceRef.current?.getExtent(), {
-           padding: [200, 200, 200, 200],
-           duration: 3000,
-         });
-       }
-       
-     }
+
+    if (assetSourceRef.current) {
+      const p1 = assetSourceRef.current?.getExtent()[0];
+      if (p1 != Infinity) {
+        mapRef.current?.getView()?.fit(assetSourceRef.current?.getExtent(), {
+          padding: [200, 200, 200, 200],
+          duration: 3000,
+        });
+      }
+    }
   }, [assetFeatures]);
-   
 
   useEffect(() => {
     mouseScrollEvent();
   }, []);
-
- 
 
   useEffect(() => {
     let newUrl;
@@ -260,21 +242,32 @@ export const AreaMap = () => {
       map?.un("moveend", handleMoveEnd);
     };
   }, []);
-  
 
   const collapsibleBtnHandler = () => {
     const tmpValue = String(isSideNavOpen).toLowerCase() === "true";
     dispatch(setIsSideNavOpen(!tmpValue));
-    const newUrl = `${
-      window.location.pathname
-    }?t=${selectedMap}&sn=${!tmpValue}&sn2=${isAreaSideNavOpen}&lyrs=${mapLyrs}&z=${areaZoomLevel}&c=${areaInitialCenter}`;
+    let newUrl;
+    if (areaName == "") {
+      newUrl = `${
+        window.location.pathname
+      }?t=${selectedMap}&sn=${!tmpValue}&sn2=${isAreaSideNavOpen}&lyrs=${mapLyrs}&z=${areaZoomLevel}&c=${areaInitialCenter}`;
+    } else {
+      newUrl = `${
+        window.location.pathname
+      }?t=${selectedMap}&sn=${!tmpValue}&sn2=${isAreaSideNavOpen}&lyrs=${mapLyrs}&z=${areaZoomLevel}&c=${areaInitialCenter}&co=${areaCountry}&ma=${areaName}`;
+    }
     window.history.replaceState({}, "", newUrl);
     // dispatch(setUrlUpdate());
   };
 
   const setLyrs = (lyrs) => {
     dispatch(setAreaLyrs(lyrs));
-    const newUrl = `${window.location.pathname}?t=${selectedMap}&sn=${isSideNavOpen}&sn2=${isAreaSideNavOpen}&lyrs=${lyrs}&z=${areaZoomLevel}&c=${areaInitialCenter}`;
+    let newUrl;
+    if (areaName == "") {
+      newUrl = `${window.location.pathname}?t=${selectedMap}&sn=${isSideNavOpen}&sn2=${isAreaSideNavOpen}&lyrs=${lyrs}&z=${areaZoomLevel}&c=${areaInitialCenter}`;
+    } else {
+      newUrl = `${window.location.pathname}?t=${selectedMap}&sn=${isSideNavOpen}&sn2=${isAreaSideNavOpen}&lyrs=${lyrs}&z=${areaZoomLevel}&c=${areaInitialCenter}&co=${areaCountry}&ma=${areaName}`;
+    }
     window.history.replaceState({}, "", newUrl);
   };
 
@@ -283,8 +276,6 @@ export const AreaMap = () => {
     window.history.replaceState({}, "", newUrl);
     dispatch(setIsAreaSideNavOpen(true));
   };
-
- 
 
   const image = new Icon({
     src: "./sync-prop.svg",
@@ -407,11 +398,8 @@ export const AreaMap = () => {
               }}
             ></olSourceXYZ>
           </olLayerTile>
-            <olLayerVector
-            ref={fPropVectorLayerRef}
-            
-            >
-            {featuredPropertyFeatures  && (
+          <olLayerVector ref={fPropVectorLayerRef}>
+            {featuredPropertyFeatures && (
               <olSourceVector
                 ref={fPropSourceRef}
                 // features={syncPropertyFeatures}
@@ -426,7 +414,7 @@ export const AreaMap = () => {
             ref={syncPropVectorLayerRef}
             style={styleFunctionSyncProperties}
           >
-            {syncPropertyFeatures  && (
+            {syncPropertyFeatures && (
               <olSourceVector
                 ref={syncPropSourceRef}
                 // features={syncPropertyFeatures}
@@ -437,11 +425,11 @@ export const AreaMap = () => {
               </olSourceVector>
             )}
           </olLayerVector>
-            <olLayerVector
+          <olLayerVector
             ref={assetLayerRef}
             style={areaMapAssetVectorLayerStyleFunction}
           >
-            {assetFeatures  && (
+            {assetFeatures && (
               <olSourceVector
                 ref={assetSourceRef}
                 // features={syncPropertyFeatures}
