@@ -39,6 +39,71 @@ const formatUrl = (url) => {
   return { url: res, urlPrefix };
 };
 
+const getStyledTexts = (name) => {
+  //console.log("name",name,)
+  const stBracketIndex = name.indexOf("(");
+  if (stBracketIndex == -1) {
+    const sp = document.createElement("SPAN");
+    const sptext = document.createTextNode(name ?? "");
+    sp.appendChild(sptext);
+    return [sp];
+  }
+  const compName = name.substr(0, stBracketIndex);
+  const addends = name.substr(stBracketIndex, name.length - stBracketIndex);
+
+  const parts = addends.split(",");
+  const spans = [];
+  const contents = []
+  //add comp name
+  const sp = document.createElement("SPAN");
+  const sptext = document.createTextNode(compName);
+  sp.appendChild(sptext);
+  sp.style.display = "block";
+  sp.style.fontSize = "1.5rem"
+  spans.push(sp);
+  contents.push({text:compName,style:{} });
+  let i = 0;
+  let c = parts.length;
+  parts.forEach((str) => {
+    //find :
+    const indexColon = str.indexOf(":");
+    if (indexColon == -1) {
+      const sp = document.createElement("SPAN");
+      const sptext = document.createTextNode(str + ",");
+      sp.appendChild(sptext);
+      spans.push(sp);
+       contents.push({text:str + ",",style:{} });
+    } else {
+      const stockEx = str.substr(1, indexColon - 1);
+      const stockVal = str.substr(indexColon, str.length - indexColon - 1);
+      //add 1
+      const sp = document.createElement("SPAN");
+      const sptext = document.createTextNode(stockEx);
+      sp.style.marginLeft = "0.25rem";
+      sp.appendChild(sptext);
+      spans.push(sp);
+      contents.push({text:stockEx + ",",style:{marginLeft : "0.25rem"} });
+
+      //add 2
+      const sp2 = document.createElement("SPAN");
+      let trailingComma = ",";
+      if (i + 1 == c) {
+        trailingComma = "";
+      }
+      const sptext2 = document.createTextNode(stockVal + trailingComma);
+      sp2.style.color = "blue";
+      sp2.style.fontWeight = 600;
+      sp2.appendChild(sptext2);
+      spans.push(sp2);
+      contents.push({text:stockVal + trailingComma,style:{color: "blue",fontWeight : 600} });
+    }
+
+    i++;
+  });
+  return contents;
+};
+
+
 const AreaFCompanyPopup = ({ isOpenIn, closePopup, titleIn,companyid }) => {
   const dispatch = useDispatch();
 
@@ -121,7 +186,7 @@ setlogoPath(urlimg)
       >
         <div className="bg-white rounded-lg min-w-[300px] flex-col justify-center items-center">
 
-          <div className="flex items-center justify-center bg-blue-200  h-12">
+          <div className="flex items-center justify-center bg-blue-200  h-12 rounded-lg">
 
             {/* <span className="text-base font-semibold leading-none text-gray-900 select-none flex item-center justify-center uppercase mt-3">
               
@@ -131,21 +196,20 @@ setlogoPath(urlimg)
               className="h-6 w-6 cursor-pointer absolute right-0 mt-2 mr-6"
             />
           </div>
-          <div className="flex-col justify-center items-center w-full">
-              <Image
+          <div  style={{display: "flex", flexDirection:"column", justify:"center", alignItems:"center"}}>
+          
+
+             <div> <Image
               src={logoPath}
-              width={100}
+              width={200}
               height={100}
+              
               alt="Logo"
-              />
+               
+              /></div>
              <span>{title}</span> 
           </div>
-          {/* <div className="flex items-center justify-center pl-8 pr-8">
-            <div className="mx-auto w-full max-w-[550px] min-w-[550px] min-h-[350px]">
-              <div className="-mx-3 flex flex-wrap mt-8"></div>
-              <div className="flex items-center justify-between mt-3 fixed bottom-8 border-t-2 border-gray-300 min-w-[550px]"></div>
-            </div>
-          </div> */}
+         
         </div>
       </Modal>
     </div>
