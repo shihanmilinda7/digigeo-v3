@@ -35,7 +35,6 @@ const stroke = new Stroke({
 });
 
 const areaMApPropertyVectorRendererFuncV2 = (pixelCoordinates, state) => {
-  console.log("sssss", state);
   const context = state.context;
   const geometry = state.geometry.clone();
   geometry.setCoordinates(pixelCoordinates);
@@ -55,7 +54,7 @@ const areaMApPropertyVectorRendererFuncV2 = (pixelCoordinates, state) => {
   //end new code
   //  const flag = state.feature.get("flag");
   const flag = img;
-  console.log("flag", flag);
+  // console.log("flag", flag);
   if (!flag || height < 1 || width < 1) {
     return;
   }

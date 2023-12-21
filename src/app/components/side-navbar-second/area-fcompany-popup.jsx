@@ -9,6 +9,8 @@ import { AiOutlineCloseCircle } from "react-icons/ai";
 import NextTextInputField from "../common-comp/next-text-input-fields";
 import { useDispatch, useSelector } from "react-redux";
 import Image from 'next/image'
+import Link from "next/link";
+import AreaFCompanyFProperties from "./area-fcompany-popup-properties";
 
 
 const formatUrl = (url) => {
@@ -16,7 +18,6 @@ const formatUrl = (url) => {
   let res = url;
   let urlPrefix = "https://";
   let a = res.search("https://");
-  console.log("a", a);
   if (a != -1) {
     res = res.substring(8);
   }
@@ -61,7 +62,7 @@ const getStyledTexts = (name) => {
   sp.style.display = "block";
   sp.style.fontSize = "1.5rem"
   spans.push(sp);
-  contents.push({text:compName,style:{} });
+  //contents.push({text:compName,style:{} });
   let i = 0;
   let c = parts.length;
   parts.forEach((str) => {
@@ -82,7 +83,7 @@ const getStyledTexts = (name) => {
       sp.style.marginLeft = "0.25rem";
       sp.appendChild(sptext);
       spans.push(sp);
-      contents.push({text:stockEx + ",",style:{marginLeft : "0.25rem"} });
+      contents.push({text:stockEx  ,style:{marginLeft : "0.25rem"} });
 
       //add 2
       const sp2 = document.createElement("SPAN");
@@ -106,10 +107,12 @@ const getStyledTexts = (name) => {
 
 const AreaFCompanyPopup = ({ isOpenIn, closePopup, titleIn,companyid }) => {
   const dispatch = useDispatch();
-
+  
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [logoPath, setlogoPath] = useState("");
+  const [sponsorData, setsponsorData] = useState([]);
+  const [profile, setprofile] = useState([]);
 
   const areaName = useSelector((state) => state.areaMapReducer.areaMiningArea);
   const areaCountry = useSelector((state) => state.areaMapReducer.areaCountry);
@@ -128,20 +131,36 @@ const AreaFCompanyPopup = ({ isOpenIn, closePopup, titleIn,companyid }) => {
       transform: "translate(-50%, -50%)",
       backgroundColor: "transparent",
       border: "none",
+       
     },
   };
 
   useEffect(() => {
     setIsOpen(isOpenIn);
   }, [isOpenIn]);
+  useEffect(() => {
+  }, [sponsorData]);
 
   useEffect(() => {
     setTitle(titleIn);
     getCompanyDetails();
-    // console.log("title", title);
-    //load logo
+    getSponsorDetails();
   }, [titleIn]);
 
+ const getSponsorDetails = async () => {
+    const f = async () => {
+      const res = await fetch(
+        `https://atlas.ceyinfo.cloud/matlas/sponsor_details/${companyid}`,
+        { cache: "no-store" }
+      );
+      const d = await res.json();
+      const sponsorData = getStyledTexts(d.data[0]?.company ?? "");
+      setsponsorData(sponsorData)
+
+      setprofile(d.data[0]?.profile ?? "")
+    };
+    f().catch(console.error);
+  };
  const getCompanyDetails = async () => {
     const f = async () => {
       const res = await fetch(
@@ -149,25 +168,15 @@ const AreaFCompanyPopup = ({ isOpenIn, closePopup, titleIn,companyid }) => {
         { cache: "no-store" }
       );
       const d = await res.json();
-     
-
          let { url, urlPrefix } = formatUrl(d.data[0]?.url ?? "");
-           console.log("res.data ",url);
-
-  //img
-  const logo = d.data[0]?.logo;
-  const logoext = d.data[0]?.logoext ?? "png";
-  
-
-      let urlimg =
+          
+        const logo = d.data[0]?.logo;
+        const logoext = d.data[0]?.logoext ?? "png";
+        let urlimg =
         `data:image/${logoext};base64,` +
         btoa(String.fromCharCode.apply(null, new Uint8Array(logo.data)));
-
-      // let blob = new Blob([projectImage], { type: "image/png" });
-      // let urlimg = URL.createObjectURL(blob);
+ 
 setlogoPath(urlimg)
-     
-
 
     };
     f().catch(console.error);
@@ -196,7 +205,7 @@ setlogoPath(urlimg)
               className="h-6 w-6 cursor-pointer absolute right-0 mt-2 mr-6"
             />
           </div>
-          <div  style={{display: "flex", flexDirection:"column", justify:"center", alignItems:"center"}}>
+          <div  style={{display: "flex", flexDirection:"column", justify:"center", alignItems:"center", padding:"1rem"}}>
           
 
              <div> <Image
@@ -207,7 +216,19 @@ setlogoPath(urlimg)
               alt="Logo"
                
               /></div>
-             <span>{title}</span> 
+            <span>{title}</span>
+            <span>
+            {sponsorData && sponsorData.map(sd =>(  
+              <span key={sd.text} style={sd.style}>{sd.text}</span>))
+            } 
+            </span>
+            <span>{profile}</span>
+            <Link href={profile} target="_blank" className="rounded-lg border border-solid" >
+             
+              {"Read More"} 
+            </Link>
+            <AreaFCompanyFProperties companyid={companyid} />
+
           </div>
          
         </div>
