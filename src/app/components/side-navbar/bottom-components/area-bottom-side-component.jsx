@@ -13,6 +13,7 @@ import Accordion from "../../common-comp/accordion";
 import AccordionItemWithEye from "../../common-comp/accordion-eye";
 import LayerVisibleDiv from "../../common-comp/layer-visible-eye";
 import { AiFillAppstore } from "react-icons/ai";
+import { setareaAssetLayerVisible, setareaFpropLayerVisible, setareaSyncClaimLinkLayerVisible, setareaSyncPropLayerVisible } from "@/store/area-map/area-map-slice";
 
 const AreaBottomSideComp = () => {
   let pathname = "";
@@ -47,6 +48,35 @@ const AreaBottomSideComp = () => {
       content: "Content for Accordion Item 3",
     },
   ];
+
+   const areaFpropLayerVisible = useSelector(
+    (state) => state.areaMapReducer.areaFpropLayerVisible
+    );
+   const areaAssetLayerVisible = useSelector(
+    (state) => state.areaMapReducer.areaAssetLayerVisible
+    );
+   const areaSyncPropLayerVisible = useSelector(
+    (state) => state.areaMapReducer.areaSyncPropLayerVisible
+    );
+   const areaSyncClaimLinkLayerVisible = useSelector(
+    (state) => state.areaMapReducer.areaSyncClaimLinkLayerVisible
+    );
+  const setareaFpropLayerVisibility = (e) => {
+    console.log("setSyncPropLayerVisibility",e) 
+      dispatch(setareaFpropLayerVisible(!areaFpropLayerVisible));
+  }
+  const setareaAssetLayerVisibility = (e) => {
+    console.log("setSyncPropLayerVisibility",e) 
+      dispatch(setareaAssetLayerVisible(!areaAssetLayerVisible));
+  }
+  const setareaSyncPropLayerVisibility = (e) => {
+    console.log("setSyncPropLayerVisibility",e) 
+      dispatch(setareaSyncPropLayerVisible(!areaSyncPropLayerVisible));
+  }
+  const setareaSyncClaimLinkLayerVisibility = (e) => {
+    console.log("setSyncPropLayerVisibility",e) 
+      dispatch(setareaSyncClaimLinkLayerVisible(!areaSyncClaimLinkLayerVisible));
+  }
 
   return (
     <div className="flex flex-col w-full">
@@ -86,10 +116,10 @@ const AreaBottomSideComp = () => {
             </AccordionItemWithEye>
             <AccordionItemWithEye title="Properties">
               <div className="flex flex-col gap-1">
-                <LayerVisibleDiv title="Property Points">
+                <LayerVisibleDiv onClick={setareaSyncPropLayerVisibility} title="Property Points">
                   <AiFillAppstore />
                 </LayerVisibleDiv>
-                <LayerVisibleDiv title="Property Outlines">
+                <LayerVisibleDiv  onClick={setareaSyncClaimLinkLayerVisibility} title="Property Outlines">
                   <AiFillAppstore />
                 </LayerVisibleDiv>
               </div>
