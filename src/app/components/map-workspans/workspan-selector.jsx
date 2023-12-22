@@ -6,6 +6,7 @@ import "ol/ol.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AreaMapWorkspan } from "./area-map-workspan";
+import { PropertiesMapWorkspan } from "./properties-map-workspan";
 
 export const WorkspanSelector = () => {
   const dispatch = useDispatch();
@@ -37,10 +38,10 @@ export const WorkspanSelector = () => {
         {/* <CompanyMapWorkspan /> */}company
       </div>
       <div
-        style={{ display: selectedMap === "commodity" ? "block" : "none" }}
+        style={{ display: selectedMap === "properties" ? "block" : "none" }}
         className="absolute right-0"
       >
-        {/* <CommodityMapWorkspan /> */}commodity
+        <PropertiesMapWorkspan />
       </div>
     </div>
   );

@@ -9,14 +9,13 @@ import {
   setAreaInitialCenter,
   setAreaLyrs,
   setAreaZoomLevel,
-  setCommodityInitialCenter,
-  setCommodityLyrs,
-  setCommodityZoomLevel,
   setCompanyInitialCenter,
   setCompanyLyrs,
   setCompanyZoomLevel,
-  setCurrentSearchString,
   setIsSideNavOpen,
+  setPropertiesInitialCenter,
+  setPropertiesLyrs,
+  setPropertiesZoomLevel,
   setSelectedMap,
 } from "../../../store/map-selector/map-selector-slice";
 import {
@@ -25,6 +24,7 @@ import {
   setAreaZoomMode,
   setIsAreaSideNavOpen,
 } from "../../../store/area-map/area-map-slice";
+import { setIsPropertiesSideNavOpen } from "@/store/properties-map/properties-map-slice";
 
 export const LandingPage = () => {
   let pathname = "";
@@ -32,20 +32,8 @@ export const LandingPage = () => {
     pathname = window.location.href;
   } catch (error) {}
 
-  const router = useRouter();
-
-  const selectedMap = useSelector(
-    (state) => state.mapSelectorReducer.selectedMap
-  );
   const isSideNavOpen = useSelector(
     (state) => state.mapSelectorReducer.isSideNavOpen
-  );
-  const mapLyrs1 = useSelector((state) => state.mapSelectorReducer.areaLyrs);
-  const areaZoomLevel = useSelector(
-    (state) => state.mapSelectorReducer.areaZoomLevel
-  );
-  const areaInitialCenter = useSelector(
-    (state) => state.mapSelectorReducer.areaInitialCenter
   );
 
   const dispatch = useDispatch();
@@ -80,8 +68,8 @@ export const LandingPage = () => {
           );
           dispatch(setAreaLyrs(mapLyrs));
           dispatch(setAreaZoomLevel(mapZoom));
-          const tmpMapCenter = mapCenter.split(",").map(Number);
-          dispatch(setAreaInitialCenter(tmpMapCenter));
+          const tmpMapCenter1 = mapCenter.split(",").map(Number);
+          dispatch(setAreaInitialCenter(tmpMapCenter1));
           dispatch(setAreaCountry(areaCountry ? areaCountry : ""));
           dispatch(setAreaMiningArea(areaName ? areaName : ""));
           break;
@@ -94,33 +82,33 @@ export const LandingPage = () => {
           dispatch(setCompanyInitialCenter(mapCenter));
 
           break;
-        case "commodity":
+        case "properties":
           dispatch(
             setIsSideNavOpen(String(isNavOpen).toLowerCase() === "true")
           );
-          dispatch(setCommodityLyrs(mapLyrs));
-          dispatch(setCommodityZoomLevel(mapZoom));
-          dispatch(setCommodityInitialCenter(mapCenter));
+          dispatch(
+            setIsPropertiesSideNavOpen(
+              String(isSecondNavOpen).toLowerCase() === "true"
+            )
+          );
+          dispatch(setPropertiesLyrs(mapLyrs));
+          dispatch(setPropertiesZoomLevel(mapZoom));
+          const tmpMapCenter2 = mapCenter.split(",").map(Number);
+          dispatch(setPropertiesInitialCenter(tmpMapCenter2));
 
           break;
 
         default:
           break;
       }
-      // router.push(
-      //   `/?t=${mapType}&sn=${isNavOpen}&lyrs=${mapLyrs}&z=${mapZoom}&c=${mapCenter}`
-      // );
-      // const newUrl = `${window.location.pathname}?t=${selectedMap}&sn=${isSideNavOpen}&lyrs=${mapLyrs1}&z=${areaZoomLevel}&c=${areaInitialCenter}`;
-      const newUrl = `${window.location.pathname}?t=${mapType}&sn=${isNavOpen}&lyrs=${mapLyrs}&z=${mapZoom}&c=${mapCenter}`;
+      const newUrl = `${window.location.pathname}?t=${mapType}&sn=${isNavOpen}&sn2=${isSecondNavOpen}&lyrs=${mapLyrs}&z=${mapZoom}&c=${mapCenter}`;
       window.history.replaceState({}, "", newUrl);
-      // dispatch(setSelectedMap(mapType));
     }
   };
 
   return (
     <div className="w-full flex bg-white">
       <div className={`${isSideNavOpen ? "z-40" : "fixed top-15 left-0 z-40"}`}>
-        {/* {mapType}-{isNavOpen}-{mapLyrs}-{mapZoom}-{mapCenter} */}
         <SideNavbar />
       </div>
       <div className="z-0">
